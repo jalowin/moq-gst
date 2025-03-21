@@ -24,6 +24,7 @@ pub static RUNTIME: Lazy<tokio::runtime::Runtime> = Lazy::new(|| {
 struct Settings {
 	pub url: Option<String>,
 	pub tls_disable_verify: bool,
+	pub authkey: Option<String>,
 }
 
 #[derive(Default)]
@@ -61,6 +62,10 @@ impl ObjectImpl for MoqSink {
 					.blurb("Disable TLS verification")
 					.default_value(false)
 					.build(),
+				glib::ParamSpecString::builder("authkey")
+					.nick("Auth Key")
+					.blurb("Auth Key for connect to relay if relay has auth key enable")
+					.build(),
 			]
 		});
 		PROPERTIES.as_ref()
@@ -72,6 +77,7 @@ impl ObjectImpl for MoqSink {
 		match pspec.name() {
 			"url" => settings.url = Some(value.get().unwrap()),
 			"tls-disable-verify" => settings.tls_disable_verify = value.get().unwrap(),
+			"authkey" => settings.authkey = value.get().unwrap(),
 			_ => unimplemented!(),
 		}
 	}
@@ -82,6 +88,7 @@ impl ObjectImpl for MoqSink {
 		match pspec.name() {
 			"url" => settings.url.to_value(),
 			"tls-disable-verify" => settings.tls_disable_verify.to_value(),
+			"authkey" => settings.authkey.to_value(),
 			_ => unimplemented!(),
 		}
 	}
